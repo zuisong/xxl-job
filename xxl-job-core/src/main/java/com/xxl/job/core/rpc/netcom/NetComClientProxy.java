@@ -36,7 +36,10 @@ public class NetComClientProxy implements FactoryBean<Object> {
 				new InvocationHandler() {
 					@Override
 					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-						
+						// todo 代理业务service, 把业务类的classname,要执行的method放在request里, 接收请求的时候作出相应的动作, 下面是接收请求输出作出的动作
+						/**
+						 * @see NetComServerFactory#invokeService(com.xxl.job.core.rpc.codec.RpcRequest, java.lang.Object)
+						 */
 						// request
 						RpcRequest request = new RpcRequest();
 	                    request.setServerAddress(serverAddress);

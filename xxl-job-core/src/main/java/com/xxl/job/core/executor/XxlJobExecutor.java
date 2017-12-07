@@ -121,6 +121,7 @@ public class XxlJobExecutor implements ApplicationContextAware {
     // ---------------------- executor-server(jetty) ----------------------
     private NetComServerFactory serverFactory = new NetComServerFactory();
     private void initExecutorServer(int port, String ip, String appName, String accessToken) throws Exception {
+        // todo 把执行业务保存到NetComServerFactory里去
         NetComServerFactory.putService(ExecutorBiz.class, new ExecutorBizImpl());   // rpc-service, base on jetty
         NetComServerFactory.setAccessToken(accessToken);
         serverFactory.start(port, ip, appName); // jetty + registry

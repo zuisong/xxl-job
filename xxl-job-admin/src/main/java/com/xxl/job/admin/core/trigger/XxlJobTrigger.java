@@ -1,12 +1,16 @@
 package com.xxl.job.admin.core.trigger;
 
+import com.xxl.job.admin.controller.JobInfoController;
 import com.xxl.job.admin.core.enums.ExecutorFailStrategyEnum;
+import com.xxl.job.admin.core.jobbean.RemoteHttpJobBean;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.route.ExecutorRouteStrategyEnum;
 import com.xxl.job.admin.core.schedule.XxlJobDynamicScheduler;
 import com.xxl.job.admin.core.thread.JobFailMonitorHelper;
+import com.xxl.job.admin.core.thread.JobRegistryMonitorHelper;
+import com.xxl.job.admin.service.impl.XxlJobServiceImpl;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.biz.model.TriggerParam;
@@ -30,14 +34,30 @@ public class XxlJobTrigger {
      *
      * @param jobId
      */
+    /**
+     * todo 一个job真正的执行逻辑在这里,jobId 由jobkey得到, jobkey由jobGroup和jobName决定，根据quertz的约定，jobGroup和jobName标识一个唯一job
+     *
+     * @see RemoteHttpJobBean#executeInternal(org.quartz.JobExecutionContext)
+     * @see org.quartz.JobKey#JobKey(java.lang.String, java.lang.String)
+     * @param jobId
+     */
     public static void trigger(int jobId) {
 
         // load data
+        /**
+         * todo 取出jobInfo, jobInfo是在添加job的时候保存到数据库的，jobinfgo里保存了一个任务执行的全部信息
+         * @see XxlJobServiceImpl#add(com.xxl.job.admin.core.model.XxlJobInfo)
+         */
         XxlJobInfo jobInfo = XxlJobDynamicScheduler.xxlJobInfoDao.loadById(jobId);              // job info
         if (jobInfo == null) {
             logger.warn(">>>>>>>>>>>> xxl-job trigger fail, jobId invalid，jobId={}", jobId);
             return;
         }
+        /**
+         * todo 拿到一个job的所有执行器地址列表, 在页面上通过调用JobInfoController#add 添加一个执行器后，通过JobRegistryMonitorHelper开启一个线程,每30秒扫描一次所有注册服务器,添加到对应的执行器地址列表中
+         * @see JobInfoController#add(com.xxl.job.admin.core.model.XxlJobInfo)
+         * @see JobRegistryMonitorHelper#start()
+         */
         XxlJobGroup group = XxlJobDynamicScheduler.xxlJobGroupDao.load(jobInfo.getJobGroup());  // group info
 
         ExecutorBlockStrategyEnum blockStrategy = ExecutorBlockStrategyEnum.match(jobInfo.getExecutorBlockStrategy(), ExecutorBlockStrategyEnum.SERIAL_EXECUTION);  // block strategy

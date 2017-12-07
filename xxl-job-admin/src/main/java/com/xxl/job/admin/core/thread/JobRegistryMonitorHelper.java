@@ -36,10 +36,17 @@ public class JobRegistryMonitorHelper {
 				while (!toStop) {
 					try {
 						// auto registry group
+						/**
+						 * todo 查找
+						 */
 						List<XxlJobGroup> groupList = XxlJobDynamicScheduler.xxlJobGroupDao.findByAddressType(0);
 						if (CollectionUtils.isNotEmpty(groupList)) {
 
 							// remove dead address (admin/executor)
+
+							/**
+							 * todo 移除超过90秒没向注册中心注册的执行器
+							 */
 							XxlJobDynamicScheduler.xxlJobRegistryDao.removeDead(RegistryConfig.DEAD_TIMEOUT);
 
 							// fresh online address (admin/executor)

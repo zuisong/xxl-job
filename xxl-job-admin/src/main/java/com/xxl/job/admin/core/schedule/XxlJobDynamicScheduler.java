@@ -73,6 +73,7 @@ public final class XxlJobDynamicScheduler implements ApplicationContextAware {
         JobFailMonitorHelper.getInstance().start();
 
         // admin-server(spring-mvc)
+        // todo 把admin-server保存到NetComServerFactory里
         NetComServerFactory.putService(AdminBiz.class, XxlJobDynamicScheduler.adminBiz);
         NetComServerFactory.setAccessToken(accessToken);
 

@@ -13,10 +13,9 @@ import java.util.Random;
  */
 public class ExecutorRouteRandom extends ExecutorRouter {
 
-    private static Random localRandom = new Random();
-
     public String route(int jobId, ArrayList<String> addressList) {
         // Collections.shuffle(addressList);
+        Random localRandom = new Random();
         return addressList.get(localRandom.nextInt(addressList.size()));
     }
 

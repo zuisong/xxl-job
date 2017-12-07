@@ -119,6 +119,9 @@ public class XxlJobServiceImpl implements XxlJobService {
 		}
 
 		// add in db
+		/**
+		 * @todo 保存jobinfo到数据库
+		 */
 		xxlJobInfoDao.save(jobInfo);
 		if (jobInfo.getId() < 1) {
 			return new ReturnT<String>(ReturnT.FAIL_CODE, "新增任务失败");
@@ -128,7 +131,10 @@ public class XxlJobServiceImpl implements XxlJobService {
         String qz_group = String.valueOf(jobInfo.getJobGroup());
         String qz_name = String.valueOf(jobInfo.getId());
         try {
-            XxlJobDynamicScheduler.addJob(qz_name, qz_group, jobInfo.getJobCron());
+			/**
+			 * todo 保存jobinfo到数据库成功才持久化到quertz数据库去
+			 */
+			XxlJobDynamicScheduler.addJob(qz_name, qz_group, jobInfo.getJobCron());
             //XxlJobDynamicScheduler.pauseJob(qz_name, qz_group);
             return ReturnT.SUCCESS;
         } catch (SchedulerException e) {
