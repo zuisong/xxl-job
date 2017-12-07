@@ -72,6 +72,7 @@ public class XxlJobExecutor implements ApplicationContextAware {
 
         // init executor-jobHandlerRepository
         if (applicationContext != null) {
+            // todo 将全部jobHandler放入jobHandlerRepository
             initJobHandlerRepository(applicationContext);
         }
 
@@ -81,6 +82,11 @@ public class XxlJobExecutor implements ApplicationContextAware {
         }
 
         // init executor-server
+        /**
+         *  todo 启动监听服务器
+         *  @see #initExecutorServer(int, String, String, String)
+         */
+
         initExecutorServer(port, ip, appName, accessToken);
     }
     public void destroy(){
@@ -124,6 +130,7 @@ public class XxlJobExecutor implements ApplicationContextAware {
         // todo 把执行业务保存到NetComServerFactory里去
         NetComServerFactory.putService(ExecutorBiz.class, new ExecutorBizImpl());   // rpc-service, base on jetty
         NetComServerFactory.setAccessToken(accessToken);
+        // todo  启动jetty服务器
         serverFactory.start(port, ip, appName); // jetty + registry
     }
     private void stopExecutorServer() {
@@ -140,6 +147,11 @@ public class XxlJobExecutor implements ApplicationContextAware {
     public static IJobHandler loadJobHandler(String name){
         return jobHandlerRepository.get(name);
     }
+
+    /**
+     * todo 这里把有 @JobHander 注解的bean放入JobHandlerRepository里，以便调用的时候要
+     * @param applicationContext
+     */
     private static void initJobHandlerRepository(ApplicationContext applicationContext){
         // init job handler action
         Map<String, Object> serviceBeanMap = applicationContext.getBeansWithAnnotation(JobHander.class);

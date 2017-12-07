@@ -23,6 +23,10 @@ import java.io.OutputStream;
 public class JettyServerHandler extends AbstractHandler {
 	private static Logger logger = LoggerFactory.getLogger(JettyServerHandler.class);
 
+	/**
+	 * 重点逻辑在
+	 * @see #doInvoke(HttpServletRequest)
+	 */
 	@Override
 	public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		
@@ -51,9 +55,16 @@ public class JettyServerHandler extends AbstractHandler {
 				rpcResponse.setError("RpcRequest byte[] is null");
 				return rpcResponse;
 			}
+			/**
+			 * todo  反序列化，拿出之前传过来的 RpcRequest
+			 */
 			RpcRequest rpcRequest = (RpcRequest) HessianSerializer.deserialize(requestBytes, RpcRequest.class);
 
 			// invoke
+			/**
+			 * todo 反射执行，具体逻辑见
+			 * @see NetComServerFactory#invokeService(com.xxl.job.core.rpc.codec.RpcRequest, java.lang.Object)
+			 */
 			RpcResponse rpcResponse = NetComServerFactory.invokeService(rpcRequest, null);
 			return rpcResponse;
 		} catch (Exception e) {

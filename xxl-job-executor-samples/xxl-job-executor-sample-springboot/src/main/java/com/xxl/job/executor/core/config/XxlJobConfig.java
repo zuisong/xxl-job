@@ -38,6 +38,12 @@ public class XxlJobConfig {
     private String accessToken;
 
     @Bean(initMethod = "start", destroyMethod = "destroy")
+    /**
+     * todo start里有一些初始化方法，进去仔细看
+     * destroy
+     * @see XxlJobExecutor#start()
+     * @see XxlJobExecutor#destroy()
+     */
     public XxlJobExecutor xxlJobExecutor() {
         logger.info(">>>>>>>>>>> xxl-job config init.");
         XxlJobExecutor xxlJobExecutor = new XxlJobExecutor();

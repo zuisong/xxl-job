@@ -21,6 +21,10 @@ import java.util.Date;
 /**
  * Created by xuxueli on 17/3/1.
  */
+
+/**
+ * todo 真正执行任务的方法在这里，会通过反射调用这里的方法
+ */
 public class ExecutorBizImpl implements ExecutorBiz {
     private static Logger logger = LoggerFactory.getLogger(ExecutorBizImpl.class);
 
@@ -66,6 +70,11 @@ public class ExecutorBizImpl implements ExecutorBiz {
         return new ReturnT<LogResult>(logResult);
     }
 
+    /**
+     * todo 真正执行一个任务
+     * @param triggerParam
+     * @return
+     */
     @Override
     public ReturnT<String> run(TriggerParam triggerParam) {
         // load old：jobHandler + jobThread
@@ -74,6 +83,9 @@ public class ExecutorBizImpl implements ExecutorBiz {
         String removeOldReason = null;
 
         // valid：jobHandler + jobThread
+        /**
+         * todo bean模式
+         */
         if (GlueTypeEnum.BEAN==GlueTypeEnum.match(triggerParam.getGlueType())) {
 
             // new jobhandler
@@ -97,6 +109,10 @@ public class ExecutorBizImpl implements ExecutorBiz {
             }
 
         } else if (GlueTypeEnum.GLUE_GROOVY==GlueTypeEnum.match(triggerParam.getGlueType())) {
+
+            /**
+             * todo glue-java 模式
+             */
 
             // valid old jobThread
             if (jobThread != null &&
@@ -141,6 +157,10 @@ public class ExecutorBizImpl implements ExecutorBiz {
             return new ReturnT<String>(ReturnT.FAIL_CODE, "glueType[" + triggerParam.getGlueType() + "] is not valid.");
         }
 
+        /**
+         * todo 处理 阻塞处理策略
+         */
+
         // executor block strategy
         if (jobThread != null) {
             ExecutorBlockStrategyEnum blockStrategy = ExecutorBlockStrategyEnum.match(triggerParam.getExecutorBlockStrategy(), null);
@@ -167,6 +187,11 @@ public class ExecutorBizImpl implements ExecutorBiz {
         }
 
         // push data to queue
+        /**
+         * todo 把执行信息放到jobThread的队列去
+         * @see JobThread#run()
+         */
+
         ReturnT<String> pushResult = jobThread.pushTriggerQueue(triggerParam);
         return pushResult;
     }

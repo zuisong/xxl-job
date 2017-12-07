@@ -1,5 +1,6 @@
 package com.xxl.job.core.rpc.netcom;
 
+import com.xxl.job.core.biz.impl.ExecutorBizImpl;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.executor.XxlJobExecutor;
 import com.xxl.job.core.rpc.codec.RpcRequest;
@@ -82,7 +83,11 @@ public class NetComServerFactory {
 
             FastClass serviceFastClass = FastClass.create(serviceClass);
             FastMethod serviceFastMethod = serviceFastClass.getMethod(methodName, parameterTypes);
-            // todo 反射执行方法
+
+            /**
+             * todo 反射执行方法, 真正执行任务的地方见
+             * @see ExecutorBizImpl#run(com.xxl.job.core.biz.model.TriggerParam)
+             */
             Object result = serviceFastMethod.invoke(serviceBean, parameters);
 
             response.setResult(result);
