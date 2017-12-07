@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 public class JettyClient {
 	private static Logger logger = LoggerFactory.getLogger(JettyClient.class);
 
+
 	public RpcResponse send(RpcRequest request) throws Exception {
 		try {
 			// serialize request
@@ -26,6 +27,10 @@ public class JettyClient {
 			}
 
 			// remote invoke
+			/**
+			 * todo 这里就是发送请求的地方，构造请求后，调用了下面的方法发送请求
+			 * @see HttpClientUtil#postRequest(java.lang.String, byte[])
+			 */
 			byte[] responseBytes = HttpClientUtil.postRequest(reqURL, requestBytes);
 			if (responseBytes == null || responseBytes.length==0) {
 				RpcResponse rpcResponse = new RpcResponse();

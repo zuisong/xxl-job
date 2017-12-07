@@ -60,13 +60,28 @@ public class XxlJobTrigger {
          */
         XxlJobGroup group = XxlJobDynamicScheduler.xxlJobGroupDao.load(jobInfo.getJobGroup());  // group info
 
+        /**
+         * todo 阻塞处理策略
+         */
         ExecutorBlockStrategyEnum blockStrategy = ExecutorBlockStrategyEnum.match(jobInfo.getExecutorBlockStrategy(), ExecutorBlockStrategyEnum.SERIAL_EXECUTION);  // block strategy
+        /**
+         * todo 失败处理策略
+         * @see ExecutorFailStrategyEnum
+         */
         ExecutorFailStrategyEnum failStrategy = ExecutorFailStrategyEnum.match(jobInfo.getExecutorFailStrategy(), ExecutorFailStrategyEnum.FAIL_ALARM);    // fail strategy
+        /**
+         * todo 路由策略
+         * @see ExecutorRouteStrategyEnum  这里定义了几个路由策咯，路由的时候会用到 routeRun 方法
+         * @see com.xxl.job.admin.core.route.ExecutorRouter#routeRun(com.xxl.job.core.biz.model.TriggerParam, java.util.ArrayList)
+         */
         ExecutorRouteStrategyEnum executorRouteStrategyEnum = ExecutorRouteStrategyEnum.match(jobInfo.getExecutorRouteStrategy(), null);    // route strategy
         ArrayList<String> addressList = (ArrayList<String>) group.getRegistryList();
 
         // broadcast
         if (ExecutorRouteStrategyEnum.SHARDING_BROADCAST == executorRouteStrategyEnum && CollectionUtils.isNotEmpty(addressList)) {
+            /**
+             * todo 分片广播
+             */
             for (int i = 0; i < addressList.size(); i++) {
                 String address = addressList.get(i);
 
@@ -114,6 +129,9 @@ public class XxlJobTrigger {
                     triggerParam.setBroadcastTotal(addressList.size()); // update02
 
                     // 4.2、trigger-run (route run / trigger remote executor)
+                    /**
+                     * todo 调用执行方法
+                     */
                     triggerResult = runExecutor(triggerParam, address);     // update03
                     triggerMsgSb.append("<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>").append(triggerResult.getMsg());
 
@@ -182,6 +200,13 @@ public class XxlJobTrigger {
             triggerParam.setBroadcastTotal(1);
 
             // 4.2、trigger-run (route run / trigger remote executor)
+            /**
+             * todo 调用路由的routeRun方法，调用执行器执行任务
+             * @see ExecutorRouteStrategyEnum 看里面的几个实现，
+             * 里面最终会调用
+             * @see com.xxl.job.admin.core.trigger.XxlJobTrigger#runExecutor(com.xxl.job.core.biz.model.TriggerParam, java.lang.String)
+             * 传入设置好的triggerParam 和 执行器地址
+             */
             triggerResult = executorRouteStrategyEnum.getRouter().routeRun(triggerParam, addressList);
             triggerMsgSb.append("<br><br><span style=\"color:#00c0ef;\" > >>>>>>>>>>>触发调度<<<<<<<<<<< </span><br>").append(triggerResult.getMsg());
 
@@ -209,9 +234,20 @@ public class XxlJobTrigger {
      * @param address
      * @return  ReturnT.content: final address
      */
+    /**
+     * todo 这里调用执行器执行任务
+     * @param triggerParam
+     * @param address
+     * @return
+     */
+
     public static ReturnT<String> runExecutor(TriggerParam triggerParam, String address){
         ReturnT<String> runResult = null;
         try {
+            /**
+             * todo 获取一个可以发送任务的 ExecutorBiz, 使用了代理，调用run方法的时机逻辑见
+             * @see com.xxl.job.core.rpc.netcom.NetComClientProxy#getObject()
+             */
             ExecutorBiz executorBiz = XxlJobDynamicScheduler.getExecutorBiz(address);
             runResult = executorBiz.run(triggerParam);
         } catch (Exception e) {

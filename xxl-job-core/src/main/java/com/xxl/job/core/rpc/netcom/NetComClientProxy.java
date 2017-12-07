@@ -49,8 +49,11 @@ public class NetComClientProxy implements FactoryBean<Object> {
 	                    request.setMethodName(method.getName());
 	                    request.setParameterTypes(method.getParameterTypes());
 	                    request.setParameters(args);
-	                    
-	                    // send
+						/**
+						 * todo 构造请求参数后，调用了下面的方法发送具体请求，这里的请求参数很重要，尤其是className,methodName,parameters, 接收参数的时候会使用反射调用到真正的方法
+						 * @see JettyClient#send(com.xxl.job.core.rpc.codec.RpcRequest)
+						 */
+						// send
 	                    RpcResponse response = client.send(request);
 	                    
 	                    // valid response

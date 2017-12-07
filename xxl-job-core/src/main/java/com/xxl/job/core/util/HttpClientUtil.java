@@ -1,5 +1,6 @@
 package com.xxl.job.core.util;
 
+import com.xxl.job.core.rpc.netcom.jetty.server.JettyServerHandler;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
@@ -25,6 +26,11 @@ public class HttpClientUtil {
 
 	/**
 	 * post request
+	 */
+	/**
+	 * todo 普通的发送请求，这里有设置几个过期时间 ，都是设置的10s 接收请求的地方在
+	 * @see JettyServerHandler#handle(java.lang.String, org.eclipse.jetty.server.Request, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 * 至此，admin端的执行过程就完了
 	 */
 	public static byte[] postRequest(String reqURL, byte[] date) throws Exception {
 		byte[] responseBytes = null;
