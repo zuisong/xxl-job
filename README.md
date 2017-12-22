@@ -45,3 +45,4 @@ XXL-JOB是一个轻量级分布式任务调度框架，其核心设计目标是�
 
 
 ## 本项目fork 于 https://github.com/xuxueli/xxl-job , 基于1.8.2 release 版本写的源码注释
+## 源码注释分支请查看 https://github.com/ZuiSong/xxl-job/tree/v1.8.2
