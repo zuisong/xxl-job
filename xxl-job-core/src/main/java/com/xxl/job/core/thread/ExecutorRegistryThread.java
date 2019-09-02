@@ -5,6 +5,7 @@ import com.xxl.job.core.biz.model.RegistryParam;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.RegistryConfig;
 import com.xxl.job.core.executor.XxlJobExecutor;
+import com.xxl.job.core.util.BetterIpUtils;
 import com.xxl.job.core.util.IpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,12 @@ public class ExecutorRegistryThread extends Thread {
         if (ip != null && ip.trim().length()>0) {
             executorAddress = ip.trim().concat(":").concat(String.valueOf(port));
         } else {
-            executorAddress = IpUtil.getIpPort(port);
+            String localIp = BetterIpUtils.getLocalIp();
+            if (localIp == null) {
+                executorAddress = IpUtil.getIpPort(port);
+            } else {
+                executorAddress = localIp.concat(":").concat(String.valueOf(port));
+            }
         }
 
         registryThread = new Thread(new Runnable() {
